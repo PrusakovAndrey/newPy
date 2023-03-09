@@ -1,4 +1,25 @@
 import json
+import datetime
+
+
+# сохранение данных в файл
+def newNote (existFile):
+    try:
+        temp = json.load(open(existFile))
+    except:
+        temp = []
+    title = input("Введите заголовк заметки -> ")
+    body = input("Введите тело заметки -> ")
+    date = datetime.datetime.now().strftime("%d-%m-%Y %H:%M")
+    temp.append({
+            "id": len(temp)+1,
+            "title": title,
+            "body": body,
+            "date": date
+        })
+    with open (existFile, 'w') as file:
+        json.dump(temp, file, indent=2, ensure_ascii=False)
+
 
 # вывод спсика всех заметок
 def printListOfNotes (infile):
@@ -26,6 +47,6 @@ def printSelectedNotes (infile):
             if elem['title'] == x:
                 print('\nЗаметка № {0}: Название {1}: \nСодержание - {2}'.format(elem['id'],elem['title'],elem['body']))
 
-
-printListOfNotes('notes.txt')
-printSelectedNotes('notes.txt')
+# printListOfNotes('notes.txt')
+# printSelectedNotes('notes.txt')
+# newNote('notes.txt')
