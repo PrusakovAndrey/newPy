@@ -24,7 +24,7 @@ def correctionNote (file):
     with open (file, 'w') as file:
         json.dump(temp, file, indent=2, ensure_ascii=False)
 
-# сохранение данных в файл
+# создание новой заметки
 def newNote (existFile):
     try:
         temp = json.load(open(existFile))
@@ -34,7 +34,7 @@ def newNote (existFile):
     body = input("Введите тело заметки -> ")
     date = datetime.datetime.now().strftime("%d-%m-%Y %H:%M")
     temp.append({
-            "id": len(temp)+1,
+            "id": ixForNewNote(existFile),
             "title": title,
             "body": body,
             "date": date
@@ -69,7 +69,36 @@ def printSelectedNotes (infile):
             if elem['title'] == x:
                 print('\nЗаметка № {0}: Название {1}: \nСодержание - {2}'.format(elem['id'],elem['title'],elem['body']))
 
+# модуль удаления заметки
+def deleteNote (file):
+    userChoice = int(input("Выберите id заметки на удаление - > "))
+    with open(file, 'r') as f:
+        temp = json.load(f)
+        minimal = 0
+        for item in temp:
+            if item['id'] == userChoice:
+                temp.pop(minimal)
+            else:
+                None
+            minimal = minimal + 1
+
+        with open(file, 'w') as outfile:
+            json.dump(temp, outfile, indent=2, ensure_ascii=False)
+
+
+def ixForNewNote(file):
+    try:
+        temp = json.load(open(file))
+    except:
+        temp = []
+    list = []
+    for items in temp:
+        list.append(items['id'])
+    return max(list)+1
+
+# print (ixForNewNote('notes.txt'))
 # printListOfNotes('notes.txt')
 # printSelectedNotes('notes.txt')
-# newNote('notes.txt')
+newNote('notes.txt')
 # correctionNote('notes.txt')
+# deleteNote('notes.txt')
