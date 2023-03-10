@@ -12,17 +12,20 @@ def correctionNote (file):
         print('{0}: {1}_{2}'.format(elem['id'],elem['title'],elem['body']))
     noteNumber = int(input ("\nВведите номер заметки, которую хотите скорректировать -> "))
     
-    print("\n",temp[noteNumber-1]['title']," _ ",temp[noteNumber-1]['body'])
-    
-    selectedPart = input ("Выберите что необходимо скорректировать: \n1 - Название\n2 - Cодержание\n- > ")
-    if selectedPart == '1':
-        newTitle = input("Новое название: ")
-        temp[noteNumber-1].update({'title':newTitle})
-    if selectedPart == '2':
-        newBody = input("Новое содержание заметки: ")
-        temp[noteNumber-1].update({'body':newBody})
-    with open (file, 'w') as file:
-        json.dump(temp, file, indent=2, ensure_ascii=False)
+    for item in temp:
+            if item['id'] == noteNumber:
+                print("\n",item['title']," _ ",item['body'])
+                selectedPart = input ("Выберите что необходимо скорректировать: \n1 - Название\n2 - Cодержание\n- > ")
+                if selectedPart == '1':
+                    newTitle = input("Новое название: ")
+                    item.update({'title':newTitle})
+                if selectedPart == '2':
+                    newBody = input("Новое содержание заметки: ")
+                    item.update({'body':newBody})
+                with open (file, 'w') as file:
+                    json.dump(temp, file, indent=2, ensure_ascii=False)
+            else:
+                print ('Заметка не найдена')
 
 # создание новой заметки
 def newNote (existFile):
@@ -42,7 +45,6 @@ def newNote (existFile):
     with open (existFile, 'w') as file:
         json.dump(temp, file, indent=2, ensure_ascii=False)
 
-
 # вывод списка всех заметок
 def printListOfNotes (infile):
     with open(infile) as file:
@@ -50,9 +52,9 @@ def printListOfNotes (infile):
         for elem in tempData:
             print('{0}: {1}'.format(elem['id'],elem['title']))
 
-# вывод заметки или заметок по одному из двух критериев (идентификатор или тема)
+# вывод заметки или заметок по одному из двух критериев (идентификатор, тема или дата)
 def printSelectedNotes (infile):
-    print ("По какому критерию отфильтровать заметки?\nПо идентификатору = 1\nПо названию = 2\nСделайте выбор")
+    print ("По какому критерию отфильтровать заметки?\nПо идентификатору = 1\nПо названию = 2\nПо дате = 3\nСделайте выбор")
     userChoice = input()
     
     with open(infile) as file:
@@ -67,6 +69,11 @@ def printSelectedNotes (infile):
         x = input ("Введите назавание заметки -> " )
         for elem in tempData:
             if elem['title'] == x:
+                print('\nЗаметка № {0}: Название {1}: \nСодержание - {2}'.format(elem['id'],elem['title'],elem['body']))
+    if userChoice == '3':
+        x = input ("Введите  дату в формате (ДД-ММ-ГГГГ) -> " )
+        for elem in tempData:
+            if elem['date'][:10] == x:
                 print('\nЗаметка № {0}: Название {1}: \nСодержание - {2}'.format(elem['id'],elem['title'],elem['body']))
 
 # модуль удаления заметки
@@ -85,7 +92,7 @@ def deleteNote (file):
         with open(file, 'w') as outfile:
             json.dump(temp, outfile, indent=2, ensure_ascii=False)
 
-
+# определение индекса, сначала ищем максимальный идентификатор заметки среди имеющихся и добавляем к нему 1
 def ixForNewNote(file):
     try:
         temp = json.load(open(file))
@@ -99,6 +106,6 @@ def ixForNewNote(file):
 # print (ixForNewNote('notes.txt'))
 # printListOfNotes('notes.txt')
 # printSelectedNotes('notes.txt')
-newNote('notes.txt')
+# newNote('notes.txt')
 # correctionNote('notes.txt')
 # deleteNote('notes.txt')
